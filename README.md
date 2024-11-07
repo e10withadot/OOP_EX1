@@ -21,27 +21,39 @@
 ## משתנים וקבועים
 ### isPlayerOne
 ייעוד: בודק אם זה התור של השחקן
+
 סוג: boolean
+
 פרטיות ומצב: protected
 ### wins
 ייעוד: כמות הנצחונות
+
 סוג: int
+
 פרטיות ומצב: protected
 ### initial_number_of_bombs
 ייעוד: כמות הפצצות הראשוני. מוגדר כ3.
+
 סוג: int
+
 פרטיות ומצב: protected static final
 ### initial_number_of_unflippedable
 ייעוד: כמות החיילים הבלתי-ניתנים לשינוי הראשוני. מוגרד כ2.
+
 סוג: int
+
 פרטיות ומצב: protected static final
 ### number_of_bombs
 ייעוד: כמות הפצצות.
+
 סוג: int
+
 פרטיות ומצב: protected
 ### number_of_unflippedable
 ייעוד: כמות החיילים הבלתי-ניתנים לשינוי.
+
 סוג: int
+
 פרטיות ומצב: protected
 ## קונסטרקטור
 מקבל משתנה isPlayerOne. מריץ `reset_bombs_and_unflippedable` ומגדיר את isPlayerOne וwins(=0).
@@ -78,11 +90,15 @@
 ## משתנים וקבועים
 ### position
 ייעוד: המיקום שבו שם השחקן חייל.
+
 סוג: Position
+
 פרטיות ומצב: protected static final
 ### disc
 ייעוד: החייל.
+
 סוג: Disc
+
 פרטיות ומצב: protected static final
 ## מטודות
 ### position
@@ -94,11 +110,15 @@
 ## משתנים וקבועים
 ### row
 ייעוד: ערך הx בלוח.
+
 סוג: double
+
 פרטיות ומצב: protected
 ### col
 ייעוד: ערך הy בלוח.
+
 סוג: double
+
 פרטיות ומצב: protected
 ## קונסטרקטור
 מקבל 2 משתנים מסוג double, הקרויים col ו-row. מגדיר את col ו-row כערכי הקלט.
@@ -112,7 +132,9 @@
 ## משתנים וקבועים
 ### aiPlayerRegistry
 ייעוד: רשימת hash של כל שחקני AI במשחק, וסוגם.
+
 סוג: Map
+
 פרטיות ומצב: private static final
 
 ## קונסטרקטור
