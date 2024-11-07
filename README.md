@@ -1,19 +1,21 @@
 # אובייקטים שצריך לממש:
 > מחלקות שמסומנים ב"V", כבר מימשנו.
-מחלקות עזר:
-* Position V
-* Move
-יורשים מPlayableLogic:
-* GameLogic
-יורשים מAIPlayer:
-* RandomAI
-* GreedyAI
-* MinMaxAI (בונוס)
-יורשים מDisc:
-* SimpleDisc
-* UnflippableDisc
-* BombDisc
-להלן רשימת האובייקטים ואינטרפייסים בפרויקט:
+* מחלקות עזר:
+- Position V
+- Move
+* יורשים מPlayableLogic:
+- GameLogic
+* יורשים מAIPlayer:
+
+- RandomAI
+- GreedyAI
+- MinMaxAI (בונוס)
+* יורשים מDisc:
+
+- SimpleDisc
+- UnflippableDisc
+- BombDisc
+##### להלן רשימת האובייקטים ואינטרפייסים בפרויקט:
 # Player
 מטודות שיושמו: 9/9
 ## משתנים וקבועים
