@@ -1,6 +1,6 @@
 public class Position {
-    protected double row;
-    protected double col;
+    private double row;
+    private double col;
 
     public Position(double row, double col) {
         this.row = row;

@@ -2,7 +2,7 @@
 > מחלקות שמסומנים ב"V", כבר מימשנו.
 * מחלקות עזר:
 - Position V
-- Move
+- Move V
 * יורשים מPlayableLogic:
 - GameLogic
 * יורשים מAIPlayer:
@@ -93,13 +93,13 @@
 
 סוג: Position
 
-פרטיות ומצב: protected static final
+פרטיות ומצב: private
 ### disc
 ייעוד: החייל.
 
 סוג: Disc
 
-פרטיות ומצב: protected static final
+פרטיות ומצב: private
 ## מטודות
 ### position
 מחזיר את position.
@@ -113,13 +113,13 @@
 
 סוג: double
 
-פרטיות ומצב: protected
+פרטיות ומצב: private
 ### col
 ייעוד: ערך הy בלוח.
 
 סוג: double
 
-פרטיות ומצב: protected
+פרטיות ומצב: private
 ## קונסטרקטור
 מקבל 2 משתנים מסוג double, הקרויים col ו-row. מגדיר את col ו-row כערכי הקלט.
 ## מטודות
