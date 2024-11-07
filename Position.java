@@ -1,17 +1,17 @@
 public class Position {
-    private Double row;
-    private Double col;
+    protected double row;
+    protected double col;
 
-    public Position(Double row, Double col) {
+    public Position(double row, double col) {
         this.row = row;
         this.col = col;
     }
 
-    public Double row(){
+    public double row(){
         return this.row;
     }
 
-    public Double col(){
+    public double col(){
         return this.col;
     }
 }
