@@ -1,4 +1,5 @@
 # Player
+מטודות שיושמו: 9/9
 ## משתנים וקבועים
 ### isPlayerOne
 #### ייעוד
@@ -64,6 +65,7 @@ protected
 ### reset_bombs_and_unflippedable
 מגדיר את number_of_bombs ו-number_of_unflippedable כמצבם הראשוני (initial_number_of_unflippedable, initial_number_of_bombs).
 # Disc
+סוגים של הinterface שצריך ליישם: simpleDisc, unflipDisc, bombDisc.
 ## מטודות
 ### getOwner
 מחזיר את owner.
@@ -88,6 +90,7 @@ Disc
 #### פרטיות ומצב
 protected static final
 # Position
+מטודות שיושמו: 2/2
 ## משתנים וקבועים
 ### row
 #### ייעוד
@@ -111,6 +114,7 @@ protected
 ### col
 מחזיר את col.
 # AIPlayer
+מטודות שיושמו: 6/6
 ## משתנים וקבועים
 ### aiPlayerRegistry
 #### ייעוד
@@ -135,7 +139,8 @@ override: מחזיר false.
 מחזיר ArrayList של aiPlayerRegistry.
 ### makeMove
 מקבל אובייקט PlayableLogic ומחזיר אובייקט Move.
-# GameLogic
+# PlayableLogic
+סוגים של הinterface שצריך ליישם: GameLogic
 ## מטודות
 ### locate_disc
 מקבל Position ו-Disc ומחשב אם המיקום של הדיסק חוקי- מחזיר true אם כן, false אם לא.
