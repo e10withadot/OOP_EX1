@@ -9,7 +9,8 @@
 - BombDisc
 * יורשים מPlayableLogic:
 - GameLogic
-* יורשים מAIPlayer:
+* יורשים מPlayer:
+- HumanPlayer
 - RandomAI
 - GreedyAI
 - MinMaxAI (בונוס)
