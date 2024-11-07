@@ -132,7 +132,7 @@ override: מחזיר false.
 ### createAIPlayer
 מקבל String עם סוג השחקן AI ו-bool המציין אם השחקן מוגדר כ"ראשון". המטודה מנסה להכין AIPlayer חדש, ומחזירה את האובייקט אם היא מצליחה.
 ### getAIPlayerTypes
-מחזיר רשימה של כל שחקני הAI ואת סוגם.
+מחזיר ArrayList של aiPlayerRegistry.
 ### makeMove
 מקבל אובייקט PlayableLogic ומחזיר אובייקט Move.
 # GameLogic
