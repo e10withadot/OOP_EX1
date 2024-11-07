@@ -3,21 +3,18 @@
 * מחלקות עזר:
 - Position V
 - Move V
-* יורשים מPlayableLogic:
-- GameLogic
-* יורשים מAIPlayer:
-
-- RandomAI
-- GreedyAI
-- MinMaxAI (בונוס)
 * יורשים מDisc:
-
 - SimpleDisc
 - UnflippableDisc
 - BombDisc
+* יורשים מPlayableLogic:
+- GameLogic
+* יורשים מAIPlayer:
+- RandomAI
+- GreedyAI
+- MinMaxAI (בונוס)
 ##### להלן רשימת האובייקטים ואינטרפייסים בפרויקט:
 # Player
-מטודות שיושמו: 9/9
 ## משתנים וקבועים
 ### isPlayerOne
 ייעוד: בודק אם זה התור של השחקן
@@ -77,7 +74,6 @@
 ### reset_bombs_and_unflippedable
 מגדיר את number_of_bombs ו-number_of_unflippedable כמצבם הראשוני (initial_number_of_unflippedable, initial_number_of_bombs).
 # Disc
-סוגים של הinterface שצריך ליישם: SimpleDisc, UnflippableDisc, BombDisc.
 ## מטודות
 ### getOwner
 מחזיר את owner.
@@ -86,7 +82,6 @@
 ### getType
 מחזיר String המייצג את סוג החייל.
 # Move
-מטודות שיושמו: 0/2
 ## משתנים וקבועים
 ### position
 ייעוד: המיקום שבו שם השחקן חייל.
@@ -106,7 +101,6 @@
 ### disc
 מחזיר את disc.
 # Position
-מטודות שיושמו: 2/2
 ## משתנים וקבועים
 ### row
 ייעוד: ערך הx בלוח.
@@ -128,7 +122,6 @@
 ### col
 מחזיר את col.
 # AIPlayer
-מטודות שיושמו: 6/6
 ## משתנים וקבועים
 ### aiPlayerRegistry
 ייעוד: רשימת hash של כל שחקני AI במשחק, וסוגם.
@@ -153,7 +146,6 @@ override: מחזיר false.
 ### makeMove
 מקבל אובייקט PlayableLogic ומחזיר אובייקט Move.
 # PlayableLogic
-סוגים של הinterface שצריך ליישם: GameLogic
 ## מטודות
 ### locate_disc
 מקבל Position ו-Disc ומחשב אם המיקום של הדיסק חוקי- מחזיר true אם כן, false אם לא.
