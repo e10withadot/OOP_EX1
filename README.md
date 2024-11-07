@@ -1,48 +1,46 @@
+# אובייקטים שצריך לממש:
+> מחלקות שמסומנים ב"V", כבר מימשנו.
+מחלקות עזר:
+* Position V
+* Move
+יורשים מPlayableLogic:
+* GameLogic
+יורשים מAIPlayer:
+* RandomAI
+* GreedyAI
+* MinMaxAI (בונוס)
+יורשים מDisc:
+* SimpleDisc
+* UnflippableDisc
+* BombDisc
+להלן רשימת האובייקטים ואינטרפייסים בפרויקט:
 # Player
 מטודות שיושמו: 9/9
 ## משתנים וקבועים
 ### isPlayerOne
-#### ייעוד
-בודק אם זה התור של השחקן
-#### סוג
-boolean
-#### פרטיות ומצב
-protected
+ייעוד: בודק אם זה התור של השחקן
+סוג: boolean
+פרטיות ומצב: protected
 ### wins
-#### ייעוד
-כמות הנצחונות
-#### סוג
-int
-#### פרטיות ומצב
-protected
+ייעוד: כמות הנצחונות
+סוג: int
+פרטיות ומצב: protected
 ### initial_number_of_bombs
-#### ייעוד
-כמות הפצצות הראשוני. מוגדר כ3.
-#### סוג
-int
-#### פרטיות ומצב
-protected static final
+ייעוד: כמות הפצצות הראשוני. מוגדר כ3.
+סוג: int
+פרטיות ומצב: protected static final
 ### initial_number_of_unflippedable
-#### ייעוד
-כמות החיילים הבלתי-ניתנים לשינוי הראשוני. מוגרד כ2.
-#### סוג
-int
-#### פרטיות ומצב
-protected static final
+ייעוד: כמות החיילים הבלתי-ניתנים לשינוי הראשוני. מוגרד כ2.
+סוג: int
+פרטיות ומצב: protected static final
 ### number_of_bombs
-#### ייעוד
-כמות הפצצות.
-#### סוג
-int
-#### פרטיות ומצב
-protected
+ייעוד: כמות הפצצות.
+סוג: int
+פרטיות ומצב: protected
 ### number_of_unflippedable
-#### ייעוד
-כמות החיילים הבלתי-ניתנים לשינוי.
-#### סוג
-int
-#### פרטיות ומצב
-protected
+ייעוד: כמות החיילים הבלתי-ניתנים לשינוי.
+סוג: int
+פרטיות ומצב: protected
 ## קונסטרקטור
 מקבל משתנה isPlayerOne. מריץ `reset_bombs_and_unflippedable` ומגדיר את isPlayerOne וwins(=0).
 ## מטודות
@@ -65,7 +63,7 @@ protected
 ### reset_bombs_and_unflippedable
 מגדיר את number_of_bombs ו-number_of_unflippedable כמצבם הראשוני (initial_number_of_unflippedable, initial_number_of_bombs).
 # Disc
-סוגים של הinterface שצריך ליישם: simpleDisc, unflipDisc, bombDisc.
+סוגים של הinterface שצריך ליישם: SimpleDisc, UnflippableDisc, BombDisc.
 ## מטודות
 ### getOwner
 מחזיר את owner.
@@ -74,38 +72,32 @@ protected
 ### getType
 מחזיר String המייצג את סוג החייל.
 # Move
+מטודות שיושמו: 0/2
 ## משתנים וקבועים
 ### position
-#### ייעוד
-המיקום שבו שם השחקן חייל.
-#### סוג
-Position
-#### פרטיות ומצב
-protected static final
+ייעוד: המיקום שבו שם השחקן חייל.
+סוג: Position
+פרטיות ומצב: protected static final
 ### disc
-#### ייעוד
-סוג החייל.
-#### סוג
-Disc
-#### פרטיות ומצב
-protected static final
+ייעוד: החייל.
+סוג: Disc
+פרטיות ומצב: protected static final
+## מטודות
+### position
+מחזיר את position.
+### disc
+מחזיר את disc.
 # Position
 מטודות שיושמו: 2/2
 ## משתנים וקבועים
 ### row
-#### ייעוד
-ערך הx בלוח.
-#### סוג
-double
-#### פרטיות ומצב
-protected
+ייעוד: ערך הx בלוח.
+סוג: double
+פרטיות ומצב: protected
 ### col
-#### ייעוד
-ערך הy בלוח.
-#### סוג
-double
-#### פרטיות ומצב
-protected
+ייעוד: ערך הy בלוח.
+סוג: double
+פרטיות ומצב: protected
 ## קונסטרקטור
 מקבל 2 משתנים מסוג double, הקרויים col ו-row. מגדיר את col ו-row כערכי הקלט.
 ## מטודות
@@ -117,12 +109,9 @@ protected
 מטודות שיושמו: 6/6
 ## משתנים וקבועים
 ### aiPlayerRegistry
-#### ייעוד
-רשימת hash של כל שחקני AI במשחק, וסוגם.
-#### סוג
-Map
-#### פרטיות ומצב
-private static final
+ייעוד: רשימת hash של כל שחקני AI במשחק, וסוגם.
+סוג: Map
+פרטיות ומצב: private static final
 
 ## קונסטרקטור
 מחלקה יורשת מPlayer. הקונסטרקטור מוביל לקונסטרקטור של Player.
