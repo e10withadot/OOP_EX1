@@ -5,8 +5,8 @@
 - Move V
 * יורשים מDisc:
 - SimpleDisc V
-- UnflippableDisc
-- BombDisc
+- UnflippableDisc V
+- BombDisc V
 * יורשים מPlayableLogic:
 - GameLogic
 * יורשים מPlayer:
@@ -106,13 +106,13 @@
 ### row
 ייעוד: ערך הx בלוח.
 
-סוג: double
+סוג: int
 
 פרטיות ומצב: private
 ### col
 ייעוד: ערך הy בלוח.
 
-סוג: double
+סוג: int
 
 פרטיות ומצב: private
 ## קונסטרקטור
