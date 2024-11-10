@@ -4,7 +4,7 @@
 - Position V
 - Move V
 * יורשים מDisc:
-- SimpleDisc
+- SimpleDisc V
 - UnflippableDisc
 - BombDisc
 * יורשים מPlayableLogic:
@@ -18,13 +18,13 @@
 # Player
 ## משתנים וקבועים
 ### isPlayerOne
-.ייעוד: בודק אם זה התור של השחקן
+ייעוד: בודק אם זה התור של השחקן.
 
 סוג: boolean
 
 פרטיות ומצב: protected
 ### wins
-ייעוד: כמות הנצחונות
+ייעוד: כמות הנצחונות.
 
 סוג: int
 
