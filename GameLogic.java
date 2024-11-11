@@ -7,16 +7,28 @@ public class GameLogic implements PlayableLogic {
     private Disc[][] discs;
     private Player player1, player2;
     private boolean isFirstPlayerTurn;
-    private Stack<Move> moveHistory;
+    private Stack<Move> moveLog;
 
     public GameLogic() {
+        // set board
+        discs = new Disc[boardSize][boardSize];
+        int i = boardSize/2-1;
+        // starting discs
+        discs[i][i] = new SimpleDisc(player1);
+        discs[i+1][i+1] = new SimpleDisc(player1);
+        discs[i+1][i] = new SimpleDisc(player2);
+        discs[i][i+1] = new SimpleDisc(player2);
+        // reset move log
+        moveLog = new Stack<Move>();
+        // initiate first turn
         isFirstPlayerTurn = true;
     }
 
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        if (discs[a.row()][a.col()] == null) {
+        if (discs[a.row()][a.col()] == null && ValidMoves().contains(a)) {
             discs[a.row()][a.col()] = disc;
+            isFirstPlayerTurn= !isFirstPlayerTurn;
             return true;
         }
         else return false;
@@ -54,9 +66,7 @@ public class GameLogic implements PlayableLogic {
                     boolean ifInBounds = k >= 0 && k < discs.length && l >= 0 && l < discs.length;
                     // and if disc belongs to opponent
                     if(ifInBounds && discs[k][l].getOwner().isPlayerOne() != turn){
-                        while(ifInBounds){
-                            if (discs[k][l] == null)
-                                break;
+                        while(ifInBounds || discs[k][l] == null){
                             // continue moving
                             k += dir[0];
                             l += dir[1];
@@ -65,13 +75,14 @@ public class GameLogic implements PlayableLogic {
                                 valid= true;
                                 break;
                             }
+                            ifInBounds = k >= 0 && k < discs.length && l >= 0 && l < discs.length;
                         }
+                        if(valid) break;
                     }
                 }
                 // final check
-                if (valid) {
+                if (valid)
                     out.add(new Position(i, j));
-                }
             }
         }
         return out;
@@ -101,22 +112,25 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean isFirstPlayerTurn() {
-        boolean out = isFirstPlayerTurn;
-        isFirstPlayerTurn= !isFirstPlayerTurn;
-        return out;
+        return isFirstPlayerTurn;
     }
 
     @Override
     public boolean isGameFinished() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isGameFinished'");
+        boolean a = ValidMoves() == null;
+        isFirstPlayerTurn= !isFirstPlayerTurn;
+        boolean b = ValidMoves() == null;
+        if(a && b) return true;
+        isFirstPlayerTurn= !isFirstPlayerTurn;
+        return false;
     }
 
     @Override
     public void reset() {
-        discs = new Disc[boardSize][boardSize];
-
-        moveHistory = new Stack<Move>();
+        GameLogic newGame = new GameLogic();
+        this.discs = newGame.discs;
+        this.isFirstPlayerTurn = newGame.isFirstPlayerTurn;
+        this.moveLog = newGame.moveLog;
     }
 
     @Override
@@ -124,5 +138,4 @@ public class GameLogic implements PlayableLogic {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'undoLastMove'");
     }
-    
 }
