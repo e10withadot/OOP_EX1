@@ -34,57 +34,42 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public List<Position> ValidMoves() {
+        // OUTPUT
         List<Position> out = new ArrayList<Position>();
         boolean turn = isFirstPlayerTurn();
-        boolean aa = false,
-        ab = false,
-        ac = false,
-        ba = false,
-        bc = false,
-        ca = false,
-        cb = false,
-        cc = false;
+        int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
+        // rows
         for (int i = 0; i < discs.length; i++) {
-            Disc[] i_reg = discs[i];
-            for (int j = 0; j < i_reg.length; j++) {
+            // columns
+            for (int j = 0; j < discs[i].length; j++) {
+                // if tile is empty
                 if (discs[i][j] != null)
                     continue;
-                if (i-1 < 0){
-                    Disc[] i_min = discs[i-1];
-                    aa = turn;
-                    if(j-1 > 0)
-                        aa = i_min[j-1].getOwner().isPlayerOne();
-                    ab = i_min[j].getOwner().isPlayerOne();
-                    ac = turn;
-                    if(j+i == discs[i].length)
-                        ac = i_min[j+1].getOwner().isPlayerOne();
+                // if move is valid
+                boolean valid = false;
+                for (int[] dir : directions) {
+                    int k = i + dir[0];
+                    int l = j + dir[1];
+                    // if tile is in bounds
+                    boolean ifInBounds = k >= 0 && k < discs.length && l >= 0 && l < discs.length;
+                    // and if disc belongs to opponent
+                    if(ifInBounds && discs[k][l].getOwner().isPlayerOne() != turn){
+                        while(ifInBounds){
+                            if (discs[k][l] == null)
+                                break;
+                            // continue moving
+                            k += dir[0];
+                            l += dir[1];
+                            // if tile is yours
+                            if(discs[k][l].getOwner().isPlayerOne() == turn){
+                                valid= true;
+                                break;
+                            }
+                        }
+                    }
                 }
-                ba = turn; 
-                if(j-1 > 0)
-                    ba = i_reg[j-1].getOwner().isPlayerOne();
-                bc = turn;
-                if(j+1 == i_reg.length)
-                    bc = i_reg[j+1].getOwner().isPlayerOne();
-                if (i+1 == discs.length){
-                    Disc[] i_max = discs[i+1];
-                    ca = turn;
-                    if(j-1 > 0)
-                        ca = i_max[j-1].getOwner().isPlayerOne();
-                    cb = i_max[j].getOwner().isPlayerOne();
-                    cc = turn;
-                    if(j+1 == i_max.length)
-                        cc = i_max[j+1].getOwner().isPlayerOne();
-                }
-                if (
-                    aa != turn || 
-                    ab != turn || 
-                    ac != turn || 
-                    bc != turn || 
-                    ba != turn || 
-                    ca != turn || 
-                    cb != turn || 
-                    cc != turn
-                    ) {
+                // final check
+                if (valid) {
                     out.add(new Position(i, j));
                 }
             }
@@ -130,6 +115,7 @@ public class GameLogic implements PlayableLogic {
     @Override
     public void reset() {
         discs = new Disc[boardSize][boardSize];
+
         moveHistory = new Stack<Move>();
     }
 
