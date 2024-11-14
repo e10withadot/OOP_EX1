@@ -9,25 +9,12 @@ public class GameLogic implements PlayableLogic {
     private boolean isFirstPlayerTurn;
     private Stack<Move> moveLog;
 
-    public GameLogic() {
-        // set board
-        discs = new Disc[boardSize][boardSize];
-        int i = boardSize/2-1;
-        // starting discs
-        discs[i][i] = new SimpleDisc(player1);
-        discs[i+1][i+1] = new SimpleDisc(player1);
-        discs[i+1][i] = new SimpleDisc(player2);
-        discs[i][i+1] = new SimpleDisc(player2);
-        // reset move log
-        moveLog = new Stack<Move>();
-        // initiate first turn
-        isFirstPlayerTurn = true;
-    }
-
     @Override
     public boolean locate_disc(Position a, Disc disc) {
         if (discs[a.row()][a.col()] == null && ValidMoves().contains(a)) {
             discs[a.row()][a.col()] = disc;
+            countFlips(a);
+            moveLog.push(new Move(a, disc));
             isFirstPlayerTurn= !isFirstPlayerTurn;
             return true;
         }
@@ -48,50 +35,94 @@ public class GameLogic implements PlayableLogic {
     public List<Position> ValidMoves() {
         // OUTPUT
         List<Position> out = new ArrayList<Position>();
-        boolean turn = isFirstPlayerTurn();
-        int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
         // rows
         for (int i = 0; i < discs.length; i++) {
             // columns
             for (int j = 0; j < discs[i].length; j++) {
-                // if tile is empty
-                if (discs[i][j] != null)
+                Position current = new Position(i, j);
+                // if tile is not empty
+                if (getDiscAtPosition(current) != null)
                     continue;
-                // if move is valid
-                boolean valid = false;
-                for (int[] dir : directions) {
-                    int k = i + dir[0];
-                    int l = j + dir[1];
-                    // if tile is in bounds
-                    boolean ifInBounds = k >= 0 && k < discs.length && l >= 0 && l < discs.length;
-                    // and if disc belongs to opponent
-                    if(ifInBounds && discs[k][l].getOwner().isPlayerOne() != turn){
-                        while(ifInBounds || discs[k][l] == null){
-                            // continue moving
-                            k += dir[0];
-                            l += dir[1];
-                            // if tile is yours
-                            if(discs[k][l].getOwner().isPlayerOne() == turn){
-                                valid= true;
-                                break;
-                            }
-                            ifInBounds = k >= 0 && k < discs.length && l >= 0 && l < discs.length;
-                        }
-                        if(valid) break;
-                    }
-                }
-                // final check
-                if (valid)
-                    out.add(new Position(i, j));
+                if (findSandwiches(current) != null)
+                    out.add(current);
             }
         }
         return out;
     }
 
+    /**
+     * Checks if the inputted Position is in-bounds.
+     * @param a Position object
+     * @return True if in-bounds, false otherwise.
+    */
+    private boolean isInBounds(Position a) {
+        return a.row() >= 0 && a.row() < discs.length && a.col() >= 0 && a.col() < discs[0].length;
+    }
+
+    /**
+     * Checks if the disc in the position belongs to the opposing player.
+     * @param a Position object
+     * @return True if belongs to enemy, false otherwise.
+     */
+    private boolean isDiscEnemy(Position a){
+        boolean turn = isFirstPlayerTurn();
+        // owner check
+        return getDiscAtPosition(a).getOwner().isPlayerOne() != turn;
+    }
+
+    /**
+     * Returns a list of all discs between every sandwich in proximity to the position a.
+     * @param a A position with neighboring sandwiches.
+     * @return a list of all discs in between sandwiches.
+     */
+    private List<Position> findSandwiches(Position a) {
+        List<Position> out = new ArrayList<>();
+        int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
+        for (int[] dir : directions) {
+            Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
+            // if 
+            if(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)){
+                // create temporary list
+                List<Position> temp = new ArrayList<>();
+                while(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)) {
+                    temp.add(current);
+                    // continue moving
+                    current= new Position(current.row()+dir[0], current.col()+dir[1]);
+                }
+                if(isInBounds(current) && getDiscAtPosition(current) != null && !isDiscEnemy(current))
+                    out.addAll(temp);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Flips a disc at the inputted position.
+     * @param a Position object
+     */
+    private void flipDiscAtPosition(Position a) {
+        int x = a.row();
+        int y = a.col();
+        if(discs[x][y].getOwner() == player1)
+            discs[x][y].setOwner(player2);
+        else discs[x][y].setOwner(player1);
+    }
+
     @Override
     public int countFlips(Position a) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'countFlips'");
+        Disc disc= getDiscAtPosition(a);
+        int flipCount = 0;
+        if(disc.getType() == "💣") {
+
+        }
+        else {
+            List<Position> sandwiches = findSandwiches(a);
+            for (Position flip : sandwiches) {
+                flipDiscAtPosition(flip);
+                flipCount++;
+            }
+        }
+        return flipCount;
     }
 
     @Override
@@ -127,10 +158,18 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
-        GameLogic newGame = new GameLogic();
-        this.discs = newGame.discs;
-        this.isFirstPlayerTurn = newGame.isFirstPlayerTurn;
-        this.moveLog = newGame.moveLog;
+        // set board
+        discs = new Disc[boardSize][boardSize];
+        int i = boardSize/2-1;
+        // starting discs
+        discs[i][i] = new SimpleDisc(player1);
+        discs[i+1][i+1] = new SimpleDisc(player1);
+        discs[i+1][i] = new SimpleDisc(player2);
+        discs[i][i+1] = new SimpleDisc(player2);
+        // reset move log
+        moveLog = new Stack<Move>();
+        // initiate first turn
+        isFirstPlayerTurn = true;
     }
 
     @Override
