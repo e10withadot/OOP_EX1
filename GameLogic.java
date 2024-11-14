@@ -80,7 +80,7 @@ public class GameLogic implements PlayableLogic {
         int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
         for (int[] dir : directions) {
             Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
-            // if 
+            // if enemy disc and in bounds
             if(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)){
                 // create temporary list
                 List<Position> temp = new ArrayList<>();
@@ -89,6 +89,7 @@ public class GameLogic implements PlayableLogic {
                     // continue moving
                     current= new Position(current.row()+dir[0], current.col()+dir[1]);
                 }
+                // if not enemy disc and in bounds
                 if(isInBounds(current) && getDiscAtPosition(current) != null && !isDiscEnemy(current))
                     out.addAll(temp);
             }
