@@ -8,7 +8,7 @@
 - UnflippableDisc V
 - BombDisc V
 * יורשים מPlayableLogic:
-- GameLogic
+- GameLogic V
 * יורשים מPlayer:
 - HumanPlayer
 - RandomAI
