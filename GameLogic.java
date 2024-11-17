@@ -8,6 +8,7 @@ public class GameLogic implements PlayableLogic {
     private Player player1, player2;
     private boolean isFirstPlayerTurn;
     private Stack<Move> moveLog;
+    private final int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
 
     @Override
     public boolean locate_disc(Position a, Disc disc) {
@@ -36,15 +37,16 @@ public class GameLogic implements PlayableLogic {
         // OUTPUT
         List<Position> out = new ArrayList<Position>();
         // rows
-        for (int i = 0; i < discs.length; i++) {
+        for (int row = 0; row < discs.length; row++) {
             // columns
-            for (int j = 0; j < discs[i].length; j++) {
-                Position current = new Position(i, j);
-                // if tile is not empty
-                if (getDiscAtPosition(current) != null)
-                    continue;
-                if (findSandwiches(current) != null)
-                    out.add(current);
+            for (int col = 0; col < discs[row].length; col++) {
+                Position current = new Position(row, col);
+                // if tile is empty
+                if (getDiscAtPosition(current) == null){
+                    List<Position> sandwiches = findSandwiches(current);
+                    if (!sandwiches.isEmpty())
+                        out.add(current);
+                }
             }
         }
         return out;
@@ -77,7 +79,6 @@ public class GameLogic implements PlayableLogic {
      */
     private List<Position> findSandwiches(Position a) {
         List<Position> out = new ArrayList<>();
-        int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
         for (int[] dir : directions) {
             Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
             // if enemy disc and in bounds
@@ -98,29 +99,62 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     * Flips a disc at the inputted position.
+     * Flips disc at inputted Position. Returns true if flipped.
      * @param a Position object
+     * @return true if flipped, false otherwise.
      */
-    private void flipDiscAtPosition(Position a) {
+    private boolean flipDiscAtPosition(Position a) {
         int x = a.row();
         int y = a.col();
-        if(discs[x][y].getOwner() == player1)
+        // don't flip
+        if(getDiscAtPosition(a).getType().equals("⭕"))
+            return false;
+        // flip
+        if(getDiscAtPosition(a).getOwner() == player1)
             discs[x][y].setOwner(player2);
         else discs[x][y].setOwner(player1);
+        return true;
+    }
+
+    /**
+     * Creates a chain reaction explosion when a bomb disc is placed.
+     * @param a Position object of the bomb disc.
+     * @return count of discs flipped.
+     */
+    private int explode(Position a) {
+        int count = 0;
+        int row = a.row(), col = a.col();
+        for (int[] dir : directions) {
+            Position current = new Position(row + dir[0], col + dir[1]);
+            if(isInBounds(current)) {
+                Disc disc= getDiscAtPosition(current);
+                if(disc != null) {
+                    boolean flipped = flipDiscAtPosition(current);
+                    if(flipped) {
+                        count++;
+                        if(disc.getType().equals("💣"))
+                            count+= explode(current);
+                    }
+                }
+            }
+        }
+        return count;
     }
 
     @Override
     public int countFlips(Position a) {
         Disc disc= getDiscAtPosition(a);
         int flipCount = 0;
-        if(disc.getType() == "💣") {
-
+        if(disc.getType().equals("💣")) {
+            flipCount = explode(a);
         }
         else {
             List<Position> sandwiches = findSandwiches(a);
+            boolean flipped;
             for (Position flip : sandwiches) {
-                flipDiscAtPosition(flip);
-                flipCount++;
+                flipped = flipDiscAtPosition(flip);
+                // check if flipped
+                if (flipped) flipCount++;
             }
         }
         return flipCount;
