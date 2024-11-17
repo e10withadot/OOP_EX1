@@ -1,17 +1,28 @@
+/**
+ * Represents an (x,y) coordinate position.
+ */
 public class Position {
-    private double row;
-    private double col;
+    private int row;
+    private int col;
 
-    public Position(double row, double col) {
+    public Position(int row, int col) {
         this.row = row;
         this.col = col;
     }
 
-    public double row(){
+    /**
+     * Returns the x coordinate.
+     * @return x coordinate
+     */
+    public int row(){
         return this.row;
     }
 
-    public double col(){
+    /**
+     * Returns the y coordinate.
+     * @return y coordinate
+     */
+    public int col(){
         return this.col;
     }
 }

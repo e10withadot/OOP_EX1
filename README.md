@@ -4,9 +4,9 @@
 - Position V
 - Move V
 * יורשים מDisc:
-- SimpleDisc
-- UnflippableDisc
-- BombDisc
+- SimpleDisc V
+- UnflippableDisc V
+- BombDisc V
 * יורשים מPlayableLogic:
 - GameLogic
 * יורשים מPlayer:
@@ -18,13 +18,13 @@
 # Player
 ## משתנים וקבועים
 ### isPlayerOne
-.ייעוד: בודק אם זה התור של השחקן
+ייעוד: בודק אם השחקן הוא השחקן הראשון.
 
 סוג: boolean
 
 פרטיות ומצב: protected
 ### wins
-ייעוד: כמות הנצחונות
+ייעוד: כמות הנצחונות.
 
 סוג: int
 
@@ -106,13 +106,13 @@
 ### row
 ייעוד: ערך הx בלוח.
 
-סוג: double
+סוג: int
 
 פרטיות ומצב: private
 ### col
 ייעוד: ערך הy בלוח.
 
-סוג: double
+סוג: int
 
 פרטיות ומצב: private
 ## קונסטרקטור
