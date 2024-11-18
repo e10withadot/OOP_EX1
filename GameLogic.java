@@ -133,6 +133,9 @@ public class GameLogic implements PlayableLogic {
         int x = a.row();
         int y = a.col();
         Disc disc = getDiscAtPosition(a);
+        // null/friendly-fire check
+        if(disc == null || current_move.disc().getOwner().isPlayerOne() == disc.getOwner().isPlayerOne())
+            return false;
         String type = disc.getType();
         // don't flip
         if(type.equals("⭕"))
@@ -155,12 +158,15 @@ public class GameLogic implements PlayableLogic {
             current_move.addFlip(a);
             // print results
             System.out.println("Player "+number+" flipped the "+type+" in ("+x+","+y+")");
+            // if bomb, explodes
+            if(type.equals("💣"))
+                explode(a);
         }
         return true;
     }
 
     /**
-     * Creates a chain reaction explosion when a bomb disc is placed.
+     * Creates a chain reaction when a bomb disc explodes.
      * @param a Position object of the bomb disc.
      * @return count of discs flipped.
      */
@@ -170,13 +176,7 @@ public class GameLogic implements PlayableLogic {
             // current position
             Position current = new Position(row + dir[0], col + dir[1]);
             if(isInBounds(current)) {
-                Disc disc= getDiscAtPosition(current);
-                // if disc is enemy's
-                if(disc != null && isDiscEnemy(current)) {
-                    flipDiscAtPosition(current, false);
-                    if(disc.getType().equals("💣"))
-                        explode(current);
-                }
+                flipDiscAtPosition(current, false);
             }
         }
     }
@@ -192,15 +192,9 @@ public class GameLogic implements PlayableLogic {
      * @param a Disc Position object
      */
     private void flip(Position a) {
-        Disc disc= getDiscAtPosition(a);
-        if(disc.getType().equals("💣")) {
-            explode(a);
-        }
-        else {
-            List<Position> sandwiches = findSandwiches(a);
-            for (Position flip : sandwiches) {
-                flipDiscAtPosition(flip, false);
-            }
+        List<Position> sandwiches = findSandwiches(a);
+        for (Position flip : sandwiches) {
+            flipDiscAtPosition(flip, false);
         }
     }
 
