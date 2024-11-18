@@ -11,28 +11,18 @@ public class GameLogic implements PlayableLogic {
     private Player player1, player2;
     private boolean isFirstPlayerTurn;
     private Stack<Move> history;
-    private boolean undo = false;
+    private Move current_move;
     private final int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
 
     public GameLogic() {
-        // set board
-        board = new Disc[boardSize][boardSize];
-        int i = boardSize/2-1;
-        // starting discs
-        board[i][i] = new SimpleDisc(player1);
-        board[i+1][i+1] = new SimpleDisc(player1);
-        board[i+1][i] = new SimpleDisc(player2);
-        board[i][i+1] = new SimpleDisc(player2);
-        // reset logs
-        history = new Stack<Move>();
-        // initiate first turn
-        isFirstPlayerTurn = true;
+        board= new Disc[boardSize][boardSize];
     }
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        if (board[a.row()][a.col()] == null && ValidMoves().contains(a)) {
-            // back up last move
-            history.push(new Move(a, disc));
+        List<Position> moves = ValidMoves();
+        if (board[a.row()][a.col()] == null && moves.contains(a)) {
+            // new current move
+            current_move= new Move(a, disc);
             // save new disc
             board[a.row()][a.col()] = disc;
             String type = disc.getType();
@@ -55,7 +45,10 @@ public class GameLogic implements PlayableLogic {
             }
             // print results
             System.out.println("Player "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
-            countFlips(a);
+            // flip necessary discs
+            flip(a);
+            // back up last move
+            history.push(current_move);
             // swap players
             isFirstPlayerTurn= !isFirstPlayerTurn;
             return true;
@@ -141,7 +134,7 @@ public class GameLogic implements PlayableLogic {
      * @param a Position object
      * @return true if flipped, false otherwise.
      */
-    private boolean flipDiscAtPosition(Position a) {
+    private boolean flipDiscAtPosition(Position a, boolean unflip) {
         int x = a.row();
         int y = a.col();
         Disc disc = getDiscAtPosition(a);
@@ -152,23 +145,20 @@ public class GameLogic implements PlayableLogic {
         // flip
         int number;
         if(disc.getOwner() == player1){
-            if(undo)
-                board[x][y].setOwner(player1);
-            else
-                board[x][y].setOwner(player2);
+            board[x][y].setOwner(player2);
             number=1;
         }
         else {
-            if(undo)
-                board[x][y].setOwner(player2);
-            else
-                board[x][y].setOwner(player1);
+            board[x][y].setOwner(player1);
             number=2;
         }
-        // print results
-        if(undo)
+        if(unflip)
+            // print results
             System.out.println("\tUndo: flipping back "+type+" in ("+x+","+y+")");
         else
+            // add to current move
+            current_move.addFlip(a);
+            // print results
             System.out.println("Player "+number+" flipped the "+type+" in ("+x+","+y+")");
         return true;
     }
@@ -178,41 +168,54 @@ public class GameLogic implements PlayableLogic {
      * @param a Position object of the bomb disc.
      * @return count of discs flipped.
      */
-    private int explode(Position a) {
-        int count = 0;
+    private void explode(Position a) {
         int row = a.row(), col = a.col();
         for (int[] dir : directions) {
+            // current position
             Position current = new Position(row + dir[0], col + dir[1]);
             if(isInBounds(current)) {
                 Disc disc= getDiscAtPosition(current);
-                if(disc != null) {
-                    flipDiscAtPosition(current);
-                    count++;
+                // if disc is enemy's
+                if(disc != null && isDiscEnemy(current)) {
+                    flipDiscAtPosition(current, false);
                     if(disc.getType().equals("💣"))
-                        count+= explode(current);
+                        explode(current);
                 }
             }
         }
-        return count;
     }
 
     @Override
     public int countFlips(Position a) {
+        List<Position> sandwiches = findSandwiches(a);
+        return sandwiches.size();
+    }
+
+    /**
+     * Flip discs according to Disc at Position.
+     * @param a Disc Position object
+     */
+    private void flip(Position a) {
         Disc disc= getDiscAtPosition(a);
-        int flipCount = 0;
         if(disc.getType().equals("💣")) {
-            flipCount = explode(a);
+            explode(a);
         }
         else {
             List<Position> sandwiches = findSandwiches(a);
-            boolean flipped;
             for (Position flip : sandwiches) {
-                flipped = flipDiscAtPosition(flip);
-                // check if flipped
-                if (flipped) flipCount++;
+                flipDiscAtPosition(flip, false);
             }
         }
-        return flipCount;
+    }
+
+    /**
+     * Unflips selected discs.
+     * @param select List of Position objects
+     */
+    private void unflip(List<Position> select) {
+        for (int i=0; i<select.size(); i++) {
+            flipDiscAtPosition(select.get(i), true);
+        }
     }
 
     @Override
@@ -274,12 +277,18 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
-        GameLogic newGame = new GameLogic();
-        this.board= newGame.board;
-        this.history= newGame.history;
-        this.player1= newGame.player1;
-        this.player2= newGame.player2;
-        this.isFirstPlayerTurn= newGame.isFirstPlayerTurn;
+        // set board
+        board = new Disc[boardSize][boardSize];
+        int i = boardSize/2-1;
+        // starting discs
+        board[i][i] = new SimpleDisc(player1);
+        board[i+1][i+1] = new SimpleDisc(player1);
+        board[i+1][i] = new SimpleDisc(player2);
+        board[i][i+1] = new SimpleDisc(player2);
+        // reset logs
+        history = new Stack<Move>();
+        // initiate first turn
+        isFirstPlayerTurn = true;
     }
 
     @Override
@@ -300,14 +309,12 @@ public class GameLogic implements PlayableLogic {
         Move move= history.pop();
         Disc disc= move.disc();
         Position pos= move.position();
-        // restore previous turn
-        undo= true;
         // print removal message
         System.out.println("\tUndo: removing "+disc.getType()+" in ("+pos.row()+","+pos.col()+")");
-        countFlips(pos);
+        // unflip flipped discs
+        unflip(move.flips());
         // remove disc
         board[pos.row()][pos.col()] = null;
-        undo = false;
         // restore special discs
         Player owner= disc.getOwner();
         if(disc.getType().equals("⭕")) {
