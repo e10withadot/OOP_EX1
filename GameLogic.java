@@ -17,32 +17,22 @@ public class GameLogic implements PlayableLogic {
     public GameLogic() {
         board= new Disc[boardSize][boardSize];
     }
+
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        List<Position> moves = ValidMoves();
-        if (board[a.row()][a.col()] == null && moves.contains(a)) {
+        if (board[a.row()][a.col()] == null && ValidMoves().contains(a)) {
             // new current move
             current_move= new Move(a, disc);
             // save new disc
             board[a.row()][a.col()] = disc;
-            String type = disc.getType();
             // player number
             int number;
             // reduce special discs
-            if(isFirstPlayerTurn()){
+            disc.reduce();
+            if(isFirstPlayerTurn())
                 number= 1;
-                if(type.equals("⭕"))
-                    player1.reduce_unflippedable();
-                else if(type.equals("💣"))
-                    player1.reduce_bomb();
-            }
-            else {
+            else
                 number= 2;
-                if(type.equals("⭕"))
-                    player2.reduce_unflippedable();
-                else if(type.equals("💣"))
-                    player2.reduce_bomb();
-            }
             // print results
             System.out.println("Player "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
             // flip necessary discs
@@ -55,6 +45,7 @@ public class GameLogic implements PlayableLogic {
         }
         else return false;
     }
+
     @Override
     public Disc getDiscAtPosition(Position position) {
         return board[position.row()][position.col()];

@@ -1,7 +1,7 @@
 /**
  * A bomb disc. Flips any nearby disc, and produces a chain reaction with other bomb discs.
  */
-public class BombDisc extends SimpleDisc {
+public class BombDisc extends Disc {
     public BombDisc(Player owner) {
         super(owner);
     }
@@ -9,5 +9,12 @@ public class BombDisc extends SimpleDisc {
     @Override
     public String getType(){
         return "💣";
+    }
+
+    @Override
+    public boolean reduce(){
+        if(owner.getNumber_of_bombs() == 0) return false;
+        owner.reduce_bomb();
+        return true;
     }
 }
