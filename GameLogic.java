@@ -157,11 +157,12 @@ public class GameLogic implements PlayableLogic {
         if(unflip)
             // print results
             System.out.println("\tUndo: flipping back "+type+" in ("+x+","+y+")");
-        else
+        else {
             // add to current move
             current_move.addFlip(a);
             // print results
             System.out.println("Player "+number+" flipped the "+type+" in ("+x+","+y+")");
+        }
         return true;
     }
 
