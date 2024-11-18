@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * GameLogic defines the rules of the Reversi game.
+ */
 public class GameLogic implements PlayableLogic {
     private final int boardSize = 8;
     private Disc[][] board;
@@ -11,6 +14,20 @@ public class GameLogic implements PlayableLogic {
     private boolean undo = false;
     private final int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
 
+    public GameLogic() {
+        // set board
+        board = new Disc[boardSize][boardSize];
+        int i = boardSize/2-1;
+        // starting discs
+        board[i][i] = new SimpleDisc(player1);
+        board[i+1][i+1] = new SimpleDisc(player1);
+        board[i+1][i] = new SimpleDisc(player2);
+        board[i][i+1] = new SimpleDisc(player2);
+        // reset logs
+        history = new Stack<Move>();
+        // initiate first turn
+        isFirstPlayerTurn = true;
+    }
     @Override
     public boolean locate_disc(Position a, Disc disc) {
         if (board[a.row()][a.col()] == null && ValidMoves().contains(a)) {
@@ -257,18 +274,12 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
-        // set board
-        board = new Disc[boardSize][boardSize];
-        int i = boardSize/2-1;
-        // starting discs
-        board[i][i] = new SimpleDisc(player1);
-        board[i+1][i+1] = new SimpleDisc(player1);
-        board[i+1][i] = new SimpleDisc(player2);
-        board[i][i+1] = new SimpleDisc(player2);
-        // reset logs
-        history = new Stack<Move>();
-        // initiate first turn
-        isFirstPlayerTurn = true;
+        GameLogic newGame = new GameLogic();
+        this.board= newGame.board;
+        this.history= newGame.history;
+        this.player1= newGame.player1;
+        this.player2= newGame.player2;
+        this.isFirstPlayerTurn= newGame.isFirstPlayerTurn;
     }
 
     @Override
