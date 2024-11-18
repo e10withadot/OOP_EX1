@@ -10,7 +10,7 @@
 * יורשים מPlayableLogic:
 - GameLogic V
 * יורשים מPlayer:
-- HumanPlayer
+- HumanPlayer V
 - RandomAI
 - GreedyAI
 - MinMaxAI (בונוס)
