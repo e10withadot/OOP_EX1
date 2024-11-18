@@ -250,6 +250,8 @@ public class GameLogic implements PlayableLogic {
         int counts[] = {0,0};
         for (Disc[] rows : board) {
             for (Disc disc : rows) {
+                // null check
+                if (disc == null) continue;
                 Player owner= disc.getOwner();
                 if(owner.equals(player1))
                     counts[0]++;
@@ -267,10 +269,14 @@ public class GameLogic implements PlayableLogic {
         isFirstPlayerTurn= !isFirstPlayerTurn;
         if(a && b) {
             int finalCount[] = countAllDiscs();
-            if(finalCount[0] > finalCount[1])
+            if(finalCount[0] > finalCount[1]) {
+                player1.addWin();
                 System.out.println("Player 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
-            else if(finalCount[0] < finalCount[1])
+            }
+            else if(finalCount[0] < finalCount[1]) {
+                player2.addWin();
                 System.out.println("Player 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
+            }
             else
                 System.out.println("The game is a tie! Both players have "+finalCount[0]+" discs.");
             return true;
