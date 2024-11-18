@@ -108,7 +108,7 @@ public class GameLogic implements PlayableLogic {
     /**
      * Returns a list of all discs between every sandwich in proximity to the position a.
      * @param a A position with neighboring sandwiches.
-     * @return a list of all discs in between sandwiches.
+     * @return a list of all flippable discs in between sandwiches.
      */
     private List<Position> findSandwiches(Position a) {
         List<Position> out = new ArrayList<>();
@@ -118,7 +118,9 @@ public class GameLogic implements PlayableLogic {
             List<Position> temp = new ArrayList<>();
             // if enemy disc and in bounds
             while(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)) {
-                temp.add(current);
+                // if not unflippable
+                if(!getDiscAtPosition(current).getType().equals("⭕"))
+                    temp.add(current);
                 // continue moving
                 current= new Position(current.row()+dir[0], current.col()+dir[1]);
             }
