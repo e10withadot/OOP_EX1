@@ -42,6 +42,6 @@ public abstract class Disc {
      * @return true if not zero, false otherwise.
      */
     public boolean reduce() {
-        return false;
+        return true;
     }
 }

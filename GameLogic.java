@@ -21,14 +21,16 @@ public class GameLogic implements PlayableLogic {
     @Override
     public boolean locate_disc(Position a, Disc disc) {
         if (board[a.row()][a.col()] == null && ValidMoves().contains(a)) {
+            // reduce special discs
+            boolean isNotZero= disc.reduce();
+            if(!isNotZero)
+                return false;
             // new current move
             current_move= new Move(a, disc);
             // save new disc
             board[a.row()][a.col()] = disc;
             // player number
             int number;
-            // reduce special discs
-            disc.reduce();
             if(isFirstPlayerTurn())
                 number= 1;
             else
