@@ -17,32 +17,24 @@ public class GameLogic implements PlayableLogic {
     public GameLogic() {
         board= new Disc[boardSize][boardSize];
     }
+
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        List<Position> moves = ValidMoves();
-        if (board[a.row()][a.col()] == null && moves.contains(a)) {
+        if (board[a.row()][a.col()] == null && ValidMoves().contains(a)) {
+            // reduce special discs
+            boolean isNotZero= disc.reduce();
+            if(!isNotZero)
+                return false;
             // new current move
             current_move= new Move(a, disc);
             // save new disc
             board[a.row()][a.col()] = disc;
-            String type = disc.getType();
             // player number
             int number;
-            // reduce special discs
-            if(isFirstPlayerTurn()){
+            if(isFirstPlayerTurn())
                 number= 1;
-                if(type.equals("⭕"))
-                    player1.reduce_unflippedable();
-                else if(type.equals("💣"))
-                    player1.reduce_bomb();
-            }
-            else {
+            else
                 number= 2;
-                if(type.equals("⭕"))
-                    player2.reduce_unflippedable();
-                else if(type.equals("💣"))
-                    player2.reduce_bomb();
-            }
             // print results
             System.out.println("Player "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
             // flip necessary discs
@@ -55,6 +47,7 @@ public class GameLogic implements PlayableLogic {
         }
         else return false;
     }
+
     @Override
     public Disc getDiscAtPosition(Position position) {
         return board[position.row()][position.col()];
@@ -108,7 +101,7 @@ public class GameLogic implements PlayableLogic {
     /**
      * Returns a list of all discs between every sandwich in proximity to the position a.
      * @param a A position with neighboring sandwiches.
-     * @return a list of all discs in between sandwiches.
+     * @return a list of all flippable discs in between sandwiches.
      */
     private List<Position> findSandwiches(Position a) {
         List<Position> out = new ArrayList<>();
@@ -118,7 +111,9 @@ public class GameLogic implements PlayableLogic {
             List<Position> temp = new ArrayList<>();
             // if enemy disc and in bounds
             while(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)) {
-                temp.add(current);
+                // if not unflippable
+                if(!getDiscAtPosition(current).getType().equals("⭕"))
+                    temp.add(current);
                 // continue moving
                 current= new Position(current.row()+dir[0], current.col()+dir[1]);
             }
@@ -138,6 +133,12 @@ public class GameLogic implements PlayableLogic {
         int x = a.row();
         int y = a.col();
         Disc disc = getDiscAtPosition(a);
+        // null check
+        if(disc == null)
+            return false;
+        // friendly-fire check
+        if(!unflip && current_move.disc().getOwner().isPlayerOne() == disc.getOwner().isPlayerOne())
+            return false;
         String type = disc.getType();
         // don't flip
         if(type.equals("⭕"))
@@ -155,16 +156,20 @@ public class GameLogic implements PlayableLogic {
         if(unflip)
             // print results
             System.out.println("\tUndo: flipping back "+type+" in ("+x+","+y+")");
-        else
+        else {
             // add to current move
             current_move.addFlip(a);
             // print results
             System.out.println("Player "+number+" flipped the "+type+" in ("+x+","+y+")");
+            // if bomb, explodes
+            if(type.equals("💣"))
+                explode(a);
+        }
         return true;
     }
 
     /**
-     * Creates a chain reaction explosion when a bomb disc is placed.
+     * Creates a chain reaction when a bomb disc explodes.
      * @param a Position object of the bomb disc.
      * @return count of discs flipped.
      */
@@ -174,13 +179,7 @@ public class GameLogic implements PlayableLogic {
             // current position
             Position current = new Position(row + dir[0], col + dir[1]);
             if(isInBounds(current)) {
-                Disc disc= getDiscAtPosition(current);
-                // if disc is enemy's
-                if(disc != null && isDiscEnemy(current)) {
-                    flipDiscAtPosition(current, false);
-                    if(disc.getType().equals("💣"))
-                        explode(current);
-                }
+                flipDiscAtPosition(current, false);
             }
         }
     }
@@ -196,15 +195,9 @@ public class GameLogic implements PlayableLogic {
      * @param a Disc Position object
      */
     private void flip(Position a) {
-        Disc disc= getDiscAtPosition(a);
-        if(disc.getType().equals("💣")) {
-            explode(a);
-        }
-        else {
-            List<Position> sandwiches = findSandwiches(a);
-            for (Position flip : sandwiches) {
-                flipDiscAtPosition(flip, false);
-            }
+        List<Position> sandwiches = findSandwiches(a);
+        for (Position flip : sandwiches) {
+            flipDiscAtPosition(flip, false);
         }
     }
 
@@ -247,6 +240,8 @@ public class GameLogic implements PlayableLogic {
         int counts[] = {0,0};
         for (Disc[] rows : board) {
             for (Disc disc : rows) {
+                // null check
+                if (disc == null) continue;
                 Player owner= disc.getOwner();
                 if(owner.equals(player1))
                     counts[0]++;
@@ -264,10 +259,14 @@ public class GameLogic implements PlayableLogic {
         isFirstPlayerTurn= !isFirstPlayerTurn;
         if(a && b) {
             int finalCount[] = countAllDiscs();
-            if(finalCount[0] > finalCount[1])
+            if(finalCount[0] > finalCount[1]) {
+                player1.addWin();
                 System.out.println("Player 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
-            else if(finalCount[0] < finalCount[1])
+            }
+            else if(finalCount[0] < finalCount[1]) {
+                player2.addWin();
                 System.out.println("Player 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
+            }
             else
                 System.out.println("The game is a tie! Both players have "+finalCount[0]+" discs.");
             return true;
