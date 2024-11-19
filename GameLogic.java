@@ -133,8 +133,11 @@ public class GameLogic implements PlayableLogic {
         int x = a.row();
         int y = a.col();
         Disc disc = getDiscAtPosition(a);
-        // null/friendly-fire check
-        if(disc == null || current_move.disc().getOwner().isPlayerOne() == disc.getOwner().isPlayerOne())
+        // null check
+        if(disc == null)
+            return false;
+        // friendly-fire check
+        if(!unflip && current_move.disc().getOwner().isPlayerOne() == disc.getOwner().isPlayerOne())
             return false;
         String type = disc.getType();
         // don't flip
