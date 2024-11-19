@@ -62,18 +62,25 @@ public class GameLogic implements PlayableLogic {
     public List<Position> ValidMoves() {
         // OUTPUT
         List<Position> out = new ArrayList<Position>();
-        // rows
-        for (int row = 0; row < board.length; row++) {
-            // columns
-            for (int col = 0; col < board[row].length; col++) {
-                Position current = new Position(row, col);
-                // if tile is empty
-                if (getDiscAtPosition(current) == null){
-                    List<Position> sandwiches = findSandwiches(current);
-                    if (!sandwiches.isEmpty())
-                        out.add(current);
+        for (int i = 0; i < 2; i++) {
+            // rows
+            for (int row = 0; row < board.length; row++) {
+                // columns
+                for (int col = 0; col < board[row].length; col++) {
+                    Position current = new Position(row, col);
+                    // if tile is empty
+                    if (getDiscAtPosition(current) == null){
+                        List<Position> sandwiches = findSandwiches(current);
+                        if (!sandwiches.isEmpty())
+                            out.add(current);
+                    }
                 }
             }
+            // switch to other player if no valid moves
+            if(out.isEmpty())
+                isFirstPlayerTurn= !isFirstPlayerTurn;
+            else
+                break;
         }
         return out;
     }
@@ -206,8 +213,8 @@ public class GameLogic implements PlayableLogic {
      * @param select List of Position objects
      */
     private void unflip(List<Position> select) {
-        for (int i=0; i<select.size(); i++) {
-            flipDiscAtPosition(select.get(i), true);
+        for (Position p : select) {
+            flipDiscAtPosition(p, true);
         }
     }
 
@@ -253,11 +260,7 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean isGameFinished() {
-        boolean a = ValidMoves().isEmpty();
-        isFirstPlayerTurn= !isFirstPlayerTurn;
-        boolean b = ValidMoves().isEmpty();
-        isFirstPlayerTurn= !isFirstPlayerTurn;
-        if(a && b) {
+        if(ValidMoves().isEmpty()) {
             int finalCount[] = countAllDiscs();
             if(finalCount[0] > finalCount[1]) {
                 player1.addWin();
