@@ -1,3 +1,4 @@
+import java.util.List;
 
 public class GreedyAI extends AIPlayer {
     
@@ -6,8 +7,14 @@ public class GreedyAI extends AIPlayer {
     }
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
+        int max_flip =0;
+        // search the move with the most fli;
+        List<Position> moves =  gameStatus.ValidMoves();
+        for (int i = 0; i < moves.size(); i++) {
+            if (gameStatus.countFlips(moves.get(i))>max_flip){
+                max_flip = gameStatus.countFlips(moves.get(i));
+            }
+        }
 
     }
 
