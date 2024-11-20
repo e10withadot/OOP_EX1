@@ -336,15 +336,7 @@ public class GameLogic implements PlayableLogic {
         // unflip flipped discs
         unflip(move.flips());
         // restore special discs
-        Player owner= disc.getOwner();
-        if(discTypeIs(pos, "⭕")) {
-            if(owner.isPlayerOne()) player1.number_of_unflippedable++;
-            else player2.number_of_unflippedable++;
-        }
-        else if (discTypeIs(pos, "💣")) {
-            if(owner.isPlayerOne()) player1.number_of_bombs++;
-            else player2.number_of_bombs++;
-        }
+        disc.restore();
         // remove disc
         board[pos.row()][pos.col()] = null;
         // swap players

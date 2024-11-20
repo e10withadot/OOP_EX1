@@ -17,4 +17,9 @@ public class UnflippableDisc extends Disc {
         owner.reduce_unflippedable();
         return true;
     }
+
+    @Override
+    public void restore(){
+        owner.add_unflippedable();
+    }
 }
