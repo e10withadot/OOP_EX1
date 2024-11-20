@@ -8,6 +8,7 @@ public class GreedyAI extends AIPlayer {
     public Move makeMove(PlayableLogic gameStatus) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'makeMove'");
+
     }
 
 }
