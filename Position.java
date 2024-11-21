@@ -1,7 +1,9 @@
+import java.util.List;
+
 /**
  * Represents an (x,y) coordinate position.
  */
-public class Position {
+public class Position implements Comparable<Position> {
     private int row;
     private int col;
 
@@ -36,5 +38,20 @@ public class Position {
             return false;
         Position p = (Position) o;
         return this.row() == p.row() && this.col() == p.col();
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        if (this.row>o.row)
+            return 1;
+        if (this.row<o.row)
+            return -1;
+        else {
+            if (this.col>o.col)
+                return 1;
+            else if (this.col<o.col)
+                return -1;
+        }
+        return 0;
     }
 }
