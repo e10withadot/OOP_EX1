@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -38,7 +36,7 @@ public class GameLogic implements PlayableLogic {
             else
                 number= 2;
             // print results
-            System.out.println("Player "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
+            System.out.println("\nPlayer "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
             // flip necessary discs
             flip(a);
             // back up last move
@@ -291,14 +289,14 @@ public class GameLogic implements PlayableLogic {
             int finalCount[] = countAllDiscs();
             if(finalCount[0] > finalCount[1]) {
                 player1.addWin();
-                System.out.println("Player 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
+                System.out.println("\nPlayer 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
             }
             else if(finalCount[0] < finalCount[1]) {
                 player2.addWin();
-                System.out.println("Player 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
+                System.out.println("\nPlayer 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
             }
             else
-                System.out.println("The game is a tie! Both players have "+finalCount[0]+" discs.");
+                System.out.println("\nThe game is a tie! Both players have "+finalCount[0]+" discs.");
             return true;
         }
         return false;
@@ -323,7 +321,7 @@ public class GameLogic implements PlayableLogic {
     @Override
     public void undoLastMove() {
         // print initial message
-        System.out.println("Undoing last move:");
+        System.out.println("\nUndoing last move:");
         // human check
         if (!(player1.isHuman() && player2.isHuman())) {
             System.out.println("\tAI Player found! Can't undo!");
