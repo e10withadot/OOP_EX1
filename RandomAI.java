@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RandomAI extends AIPlayer {
@@ -8,16 +10,21 @@ public class RandomAI extends AIPlayer {
     }
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        Disc[] types = {new SimpleDisc(this), new UnflippableDisc(this), new BombDisc(this)};
-        Disc disc = types[(int)(Math.random()*types.length-1)];
-        // If the special disks are finished, switch to a regular disk
-        if(!disc.reduce()) {
-            disc = types[0];
-        }
-        //Select a random move from all the available options
-        int rand_pos;
+        // type of disc
+        List<Disc> types = new ArrayList<>();
+        // add simple disc
+        types.add(new SimpleDisc(this));
+        if(getNumber_of_unflippedable() > 0)
+            // add unflippable disc
+            types.add(new UnflippableDisc(this));
+        if(getNumber_of_bombs() > 0)
+            // add bomb disc
+            types.add(new BombDisc(this));
+        // choose random type
+        Disc disc = types.get((int)(Math.random()*types.size()-1));
+        // choose random position
         List<Position> moves =  gameStatus.ValidMoves();
-        rand_pos = (int) (Math.random()*moves.size()-1);
+        int rand_pos = (int) (Math.random()*moves.size()-1);
         return new Move(moves.get(rand_pos), disc);
     }
 }
