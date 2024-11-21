@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -152,7 +154,7 @@ public class GameLogic implements PlayableLogic {
         }
         // positions affected by blast
         for (Position explosion : explosions) {
-            List<Position> radius= explode(explosion);
+            List<Position> radius= explode(explosion, new Stack<Position>());
             for (Position blast : radius) {
                 if(!out.contains(blast))
                     out.add(blast);
@@ -195,17 +197,22 @@ public class GameLogic implements PlayableLogic {
      * @param a Position object of the bomb disc.
      * @return count of discs flipped.
      */
-    private List<Position> explode(Position a) {
+    private List<Position> explode(Position a, Stack<Position> history) {
         // blast radius
         List<Position> radius= new ArrayList<>();
+        // recursion check
+        if (history.contains(a))
+            return radius;
+        // add to history
+        history.push(a);
         for (int[] dir : directions) {
             // current position
             Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
             if(discExists(current) && isDiscEnemy(current)) {
                 radius.add(current);
                 // chain reaction
-                if(discTypeIs(current, "💣"))
-                    radius.addAll(explode(current));
+                if(discTypeIs(current, "💣") && !history.contains(a))
+                    radius.addAll(explode(current, history));
             }
         }
         return radius;
