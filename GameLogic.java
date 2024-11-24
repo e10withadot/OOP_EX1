@@ -207,10 +207,12 @@ public class GameLogic implements PlayableLogic {
             // current position
             Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
             if(discExists(current) && isDiscEnemy(current)) {
-                radius.add(current);
-                // chain reaction
-                if(discTypeIs(current, "💣") && !history.contains(a))
-                    radius.addAll(explode(current, history));
+                if(!discTypeIs(current, "⭕")){
+                    radius.add(current);
+                    // chain reaction
+                    if(discTypeIs(current, "💣") && !history.contains(a))
+                        radius.addAll(explode(current, history));
+                }
             }
         }
         return radius;
