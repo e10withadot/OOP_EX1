@@ -314,6 +314,9 @@ public class GameLogic implements PlayableLogic {
         board[i+1][i+1] = new SimpleDisc(player1);
         board[i+1][i] = new SimpleDisc(player2);
         board[i][i+1] = new SimpleDisc(player2);
+        // reset special discs
+        player1.reset_bombs_and_unflippedable();
+        player2.reset_bombs_and_unflippedable();
         // reset logs
         history = new Stack<Move>();
         // initiate first turn
