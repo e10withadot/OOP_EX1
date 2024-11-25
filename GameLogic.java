@@ -1,4 +1,6 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Stack;
 
@@ -10,7 +12,7 @@ public class GameLogic implements PlayableLogic {
     private Disc[][] board;
     private Player player1, player2;
     private boolean isFirstPlayerTurn;
-    private Stack<Move> history;
+    private Deque<Move> history;
     private Move current_move;
     private final int directions[][] = {{-1, -1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {1, 1}, {1, -1}, {-1, 1}};
 
@@ -318,9 +320,30 @@ public class GameLogic implements PlayableLogic {
         player1.reset_bombs_and_unflippedable();
         player2.reset_bombs_and_unflippedable();
         // reset logs
-        history = new Stack<Move>();
+        history = new ArrayDeque<Move>();
         // initiate first turn
         isFirstPlayerTurn = true;
+    }
+
+    /**
+     * Copies the current GameLogic object.
+     * @return GameLogic object.
+     */
+    public GameLogic copy(){
+        GameLogic newLogic = new GameLogic();
+        for (int i=0; i<this.boardSize; i++) {
+            for (int j=0; j<this.boardSize; j++) {
+                Disc disc= this.board[i][j];
+                if(disc != null) {
+                    newLogic.board[i][j]=disc.copy();
+                }
+            }
+        }
+        newLogic.history= new ArrayDeque<>(this.history);
+        newLogic.player1= player1.copy();
+        newLogic.player2= player2.copy();
+        newLogic.isFirstPlayerTurn= this.isFirstPlayerTurn ? true : false;
+        return newLogic;
     }
 
     @Override
@@ -333,7 +356,7 @@ public class GameLogic implements PlayableLogic {
             return;
         }
         // empty check
-        if (history.empty()) {
+        if (history.isEmpty()) {
             System.out.println("\tNo previous move available to undo.");
             return;
         }

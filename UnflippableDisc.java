@@ -22,4 +22,9 @@ public class UnflippableDisc extends Disc {
     public void restore(){
         owner.add_unflippedable();
     }
+    
+    @Override
+    public Disc copy(){
+        return new UnflippableDisc(owner);
+    }
 }

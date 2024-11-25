@@ -10,4 +10,9 @@ public class HumanPlayer extends Player {
         return true;
     }
 
+    @Override
+    public Player copy() {
+        Player p = new HumanPlayer(isPlayerOne);
+        return p;
+    }
 }

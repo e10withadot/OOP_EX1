@@ -10,4 +10,9 @@ public class SimpleDisc extends Disc {
     public String getType(){
         return "⬤";
     }
+
+    @Override
+    public Disc copy(){
+        return new SimpleDisc(owner);
+    }
 }

@@ -67,4 +67,9 @@ public abstract class Player {
         this.number_of_unflippedable = initial_number_of_unflippedable;
     }
 
+    /**
+     * Copies the Player object.
+     * @return a copy of the Player object.
+     */
+    public abstract Player copy();
 }

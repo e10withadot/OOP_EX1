@@ -28,4 +28,10 @@ public class GreedyAI extends AIPlayer {
         greatestMoves.sort(Comparator.reverseOrder());
         return new Move(greatestMoves.getFirst(), disc);
     }
+
+    @Override
+    public Player copy() {
+        Player p = new GreedyAI(isPlayerOne);
+        return p;
+    }
 }
