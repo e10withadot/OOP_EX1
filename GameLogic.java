@@ -325,27 +325,6 @@ public class GameLogic implements PlayableLogic {
         isFirstPlayerTurn = true;
     }
 
-    /**
-     * Copies the current GameLogic object.
-     * @return GameLogic object.
-     */
-    public GameLogic copy(){
-        GameLogic newLogic = new GameLogic();
-        for (int i=0; i<this.boardSize; i++) {
-            for (int j=0; j<this.boardSize; j++) {
-                Disc disc= this.board[i][j];
-                if(disc != null) {
-                    newLogic.board[i][j]=disc.copy();
-                }
-            }
-        }
-        newLogic.history= new ArrayDeque<>(this.history);
-        newLogic.player1= player1.copy();
-        newLogic.player2= player2.copy();
-        newLogic.isFirstPlayerTurn= this.isFirstPlayerTurn ? true : false;
-        return newLogic;
-    }
-
     @Override
     public void undoLastMove() {
         // print initial message

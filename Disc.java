@@ -51,12 +51,4 @@ public abstract class Disc {
     public void restore() {
 
     }
-
-    /**
-     * Copies the Disc object.
-     * @return copied Disc object.
-     */
-    public Disc copy() {
-        return null;
-    }
 }

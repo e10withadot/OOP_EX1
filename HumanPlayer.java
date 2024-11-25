@@ -9,10 +9,4 @@ public class HumanPlayer extends Player {
     boolean isHuman() {
         return true;
     }
-
-    @Override
-    public Player copy() {
-        Player p = new HumanPlayer(isPlayerOne);
-        return p;
-    }
 }

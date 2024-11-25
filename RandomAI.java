@@ -26,10 +26,4 @@ public class RandomAI extends AIPlayer {
         int rand_pos = (int) (Math.random()*moves.size()-1);
         return new Move(moves.get(rand_pos), disc);
     }
-
-    @Override
-    public Player copy() {
-        Player p = new RandomAI(isPlayerOne);
-        return p;
-    }
 }

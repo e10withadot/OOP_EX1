@@ -22,8 +22,4 @@ public class BombDisc extends Disc {
     public void restore(){
         owner.add_bomb();
     }
-    @Override
-    public Disc copy(){
-        return new BombDisc(owner);
-    }
 }
