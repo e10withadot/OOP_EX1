@@ -17,4 +17,9 @@ public class BombDisc extends Disc {
         owner.reduce_bomb();
         return true;
     }
+
+    @Override
+    public void restore(){
+        owner.add_bomb();
+    }
 }

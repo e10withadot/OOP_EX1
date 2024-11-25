@@ -44,4 +44,11 @@ public abstract class Disc {
     public boolean reduce() {
         return true;
     }
+
+    /**
+     * Adds one back to owner's amount of the disc.
+     */
+    public void restore() {
+
+    }
 }

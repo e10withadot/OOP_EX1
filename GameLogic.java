@@ -36,7 +36,7 @@ public class GameLogic implements PlayableLogic {
             else
                 number= 2;
             // print results
-            System.out.println("Player "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
+            System.out.println("\nPlayer "+number+" placed a "+disc.getType()+" in ("+a.row()+","+a.col()+")");
             // flip necessary discs
             flip(a);
             // back up last move
@@ -62,97 +62,123 @@ public class GameLogic implements PlayableLogic {
     public List<Position> ValidMoves() {
         // OUTPUT
         List<Position> out = new ArrayList<Position>();
-        // rows
-        for (int row = 0; row < board.length; row++) {
-            // columns
-            for (int col = 0; col < board[row].length; col++) {
-                Position current = new Position(row, col);
-                // if tile is empty
-                if (getDiscAtPosition(current) == null){
-                    List<Position> sandwiches = findSandwiches(current);
-                    if (!sandwiches.isEmpty())
-                        out.add(current);
+        for (int i = 0; i < 2; i++) {
+            // rows
+            for (int row = 0; row < board.length; row++) {
+                // columns
+                for (int col = 0; col < board[row].length; col++) {
+                    Position current = new Position(row, col);
+                    // if tile is empty
+                    if (getDiscAtPosition(current) == null){
+                        List<Position> sandwiches = findFlips(current);
+                        // if no valid moves
+                        if (!sandwiches.isEmpty())
+                            out.add(current);
+                    }
                 }
             }
+            // switch to other player if no valid moves
+            if(out.isEmpty())
+                isFirstPlayerTurn= !isFirstPlayerTurn;
+            else
+                break;
         }
         return out;
     }
 
     /**
-     * Checks if the inputted Position is in-bounds.
+     * Check if the position is in bounds and has a disc.
      * @param a Position object
-     * @return True if in-bounds, false otherwise.
-    */
-    private boolean isInBounds(Position a) {
-        return a.row() >= 0 && a.row() < board.length && a.col() >= 0 && a.col() < board[0].length;
+     * @return true if Disc exists, false otherwise.
+     */
+    private boolean discExists(Position a){
+        return
+            // is in bounds
+            a.row() >= 0 && a.row() < board.length && a.col() >= 0 && a.col() < board[0].length
+            // is not empty
+            && getDiscAtPosition(a) != null;
+    }
+
+    /**
+     * Checks if Disc type matches emoji.
+     * @param pos Disc's position
+     * @param type String containing "⬤", "⭕", or "💣".
+     * @return true if type matches, false otherwise.
+     */
+    private boolean discTypeIs(Position pos, String type){
+        return getDiscAtPosition(pos).getType().equals(type);
     }
 
     /**
      * Checks if the disc in the position belongs to the opposing player.
      * @param a Position object
-     * @return True if belongs to enemy, false otherwise.
+     * @return true if belongs to enemy, false otherwise.
      */
     private boolean isDiscEnemy(Position a){
-        boolean turn = isFirstPlayerTurn();
-        // owner check
-        return getDiscAtPosition(a).getOwner().isPlayerOne() != turn;
+        // if disc owner is not current player
+        return getDiscAtPosition(a).getOwner().isPlayerOne() != isFirstPlayerTurn();
     }
 
     /**
-     * Returns a list of all discs between every sandwich in proximity to the position a.
-     * @param a A position with neighboring sandwiches.
-     * @return a list of all flippable discs in between sandwiches.
+     * Returns a list of all positions flipped due to position a.
+     * @param a Position object
+     * @return a list of all positions affected.
      */
-    private List<Position> findSandwiches(Position a) {
+    private List<Position> findFlips(Position a) {
         List<Position> out = new ArrayList<>();
+        List<Position> explosions = new ArrayList<>();
         for (int[] dir : directions) {
             Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
-            // create temporary list
-            List<Position> temp = new ArrayList<>();
-            // if enemy disc and in bounds
-            while(isInBounds(current) && getDiscAtPosition(current) != null && isDiscEnemy(current)) {
-                // if not unflippable
-                if(!getDiscAtPosition(current).getType().equals("⭕"))
-                    temp.add(current);
+            List<Position> positions= new ArrayList<>();
+            while(discExists(current) && isDiscEnemy(current)){
+                // add position
+                positions.add(current);
                 // continue moving
                 current= new Position(current.row()+dir[0], current.col()+dir[1]);
             }
-            // if not enemy disc and in bounds
-            if(isInBounds(current) && getDiscAtPosition(current) != null && !isDiscEnemy(current))
-                out.addAll(temp);
+            // if in bounds
+            if(discExists(current)) {
+                for (Position position : positions) {
+                    // if not unflippable
+                    if(!discTypeIs(position, "⭕")) {
+                        out.add(position);
+                        // if bomb
+                        if(discTypeIs(position, "💣")){
+                            explosions.add(position);
+                        }
+                    }
+                }
+            }
+        }
+        // positions affected by blast
+        for (Position explosion : explosions) {
+            List<Position> radius= explode(explosion, new Stack<Position>());
+            for (Position blast : radius) {
+                if(!out.contains(blast))
+                    out.add(blast);
+            }
         }
         return out;
     }
 
     /**
-     * Flips disc at inputted Position. Returns true if flipped.
+     * Flips disc at inputted Position. Prints result.
      * @param a Position object
-     * @return true if flipped, false otherwise.
      */
-    private boolean flipDiscAtPosition(Position a, boolean unflip) {
+    private void flipDiscAtPosition(Position a, boolean unflip) {
         int x = a.row();
         int y = a.col();
-        Disc disc = getDiscAtPosition(a);
-        // null check
-        if(disc == null)
-            return false;
-        // friendly-fire check
-        if(!unflip && current_move.disc().getOwner().isPlayerOne() == disc.getOwner().isPlayerOne())
-            return false;
-        String type = disc.getType();
-        // don't flip
-        if(type.equals("⭕"))
-            return false;
         // flip
         int number;
-        if(disc.getOwner() == player1){
-            board[x][y].setOwner(player2);
+        if(isFirstPlayerTurn()){
+            board[x][y].setOwner(player1);
             number=1;
         }
         else {
-            board[x][y].setOwner(player1);
+            board[x][y].setOwner(player2);
             number=2;
         }
+        String type = getDiscAtPosition(a).getType();
         if(unflip)
             // print results
             System.out.println("\tUndo: flipping back "+type+" in ("+x+","+y+")");
@@ -161,11 +187,7 @@ public class GameLogic implements PlayableLogic {
             current_move.addFlip(a);
             // print results
             System.out.println("Player "+number+" flipped the "+type+" in ("+x+","+y+")");
-            // if bomb, explodes
-            if(type.equals("💣"))
-                explode(a);
         }
-        return true;
     }
 
     /**
@@ -173,20 +195,32 @@ public class GameLogic implements PlayableLogic {
      * @param a Position object of the bomb disc.
      * @return count of discs flipped.
      */
-    private void explode(Position a) {
-        int row = a.row(), col = a.col();
+    private List<Position> explode(Position a, Stack<Position> history) {
+        // blast radius
+        List<Position> radius= new ArrayList<>();
+        // recursion check
+        if (history.contains(a))
+            return radius;
+        // add to history
+        history.push(a);
         for (int[] dir : directions) {
             // current position
-            Position current = new Position(row + dir[0], col + dir[1]);
-            if(isInBounds(current)) {
-                flipDiscAtPosition(current, false);
+            Position current = new Position(a.row() + dir[0], a.col() + dir[1]);
+            if(discExists(current) && isDiscEnemy(current)) {
+                if(!discTypeIs(current, "⭕")){
+                    radius.add(current);
+                    // chain reaction
+                    if(discTypeIs(current, "💣") && !history.contains(a))
+                        radius.addAll(explode(current, history));
+                }
             }
         }
+        return radius;
     }
 
     @Override
     public int countFlips(Position a) {
-        List<Position> sandwiches = findSandwiches(a);
+        List<Position> sandwiches = findFlips(a);
         return sandwiches.size();
     }
 
@@ -195,7 +229,7 @@ public class GameLogic implements PlayableLogic {
      * @param a Disc Position object
      */
     private void flip(Position a) {
-        List<Position> sandwiches = findSandwiches(a);
+        List<Position> sandwiches = findFlips(a);
         for (Position flip : sandwiches) {
             flipDiscAtPosition(flip, false);
         }
@@ -206,8 +240,8 @@ public class GameLogic implements PlayableLogic {
      * @param select List of Position objects
      */
     private void unflip(List<Position> select) {
-        for (int i=0; i<select.size(); i++) {
-            flipDiscAtPosition(select.get(i), true);
+        for (Position p : select) {
+            flipDiscAtPosition(p, true);
         }
     }
 
@@ -253,22 +287,18 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean isGameFinished() {
-        boolean a = ValidMoves().isEmpty();
-        isFirstPlayerTurn= !isFirstPlayerTurn;
-        boolean b = ValidMoves().isEmpty();
-        isFirstPlayerTurn= !isFirstPlayerTurn;
-        if(a && b) {
+        if(ValidMoves().isEmpty()) {
             int finalCount[] = countAllDiscs();
             if(finalCount[0] > finalCount[1]) {
                 player1.addWin();
-                System.out.println("Player 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
+                System.out.println("\nPlayer 1 wins with "+finalCount[0]+" discs! Player 2 had "+finalCount[1]+" discs.");
             }
             else if(finalCount[0] < finalCount[1]) {
                 player2.addWin();
-                System.out.println("Player 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
+                System.out.println("\nPlayer 2 wins with "+finalCount[1]+" discs! Player 1 had "+finalCount[0]+" discs.");
             }
             else
-                System.out.println("The game is a tie! Both players have "+finalCount[0]+" discs.");
+                System.out.println("\nThe game is a tie! Both players have "+finalCount[0]+" discs.");
             return true;
         }
         return false;
@@ -284,6 +314,9 @@ public class GameLogic implements PlayableLogic {
         board[i+1][i+1] = new SimpleDisc(player1);
         board[i+1][i] = new SimpleDisc(player2);
         board[i][i+1] = new SimpleDisc(player2);
+        // reset special discs
+        player1.reset_bombs_and_unflippedable();
+        player2.reset_bombs_and_unflippedable();
         // reset logs
         history = new Stack<Move>();
         // initiate first turn
@@ -293,7 +326,7 @@ public class GameLogic implements PlayableLogic {
     @Override
     public void undoLastMove() {
         // print initial message
-        System.out.println("Undoing last move:");
+        System.out.println("\nUndoing last move:");
         // human check
         if (!(player1.isHuman() && player2.isHuman())) {
             System.out.println("\tAI Player found! Can't undo!");
@@ -312,18 +345,10 @@ public class GameLogic implements PlayableLogic {
         System.out.println("\tUndo: removing "+disc.getType()+" in ("+pos.row()+","+pos.col()+")");
         // unflip flipped discs
         unflip(move.flips());
+        // restore special discs
+        disc.restore();
         // remove disc
         board[pos.row()][pos.col()] = null;
-        // restore special discs
-        Player owner= disc.getOwner();
-        if(disc.getType().equals("⭕")) {
-            if(owner.isPlayerOne()) player1.number_of_unflippedable++;
-            else player2.number_of_unflippedable++;
-        }
-        else if (disc.getType().equals("💣")) {
-            if(owner.isPlayerOne()) player1.number_of_bombs++;
-            else player2.number_of_bombs++;
-        }
         // swap players
         isFirstPlayerTurn= !isFirstPlayerTurn;
     }
