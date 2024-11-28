@@ -11,8 +11,8 @@
 - GameLogic V
 * יורשים מPlayer:
 - HumanPlayer V
-- RandomAI
-- GreedyAI
+- RandomAI V
+- GreedyAI V
 - MinMaxAI (בונוס)
 ##### להלן רשימת האובייקטים ואינטרפייסים בפרויקט:
 # Player
