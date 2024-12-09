@@ -212,7 +212,7 @@ public class GameLogic implements PlayableLogic {
                 if(!discTypeIs(current, "⭕")){
                     radius.add(current);
                     // chain reaction
-                    if(discTypeIs(current, "💣") && !history.contains(a))
+                    if(discTypeIs(current, "💣") && !history.contains(current))
                         radius.addAll(explode(current, history));
                 }
             }
